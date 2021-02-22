@@ -1,4 +1,5 @@
 /* eslint-disable import/extensions */
+import bcrypt from 'bcryptjs';
 import User from '../models/user.js';
 import {
   BAD_REQUEST_ERR, NOT_FOUND_ERR, INTERNAL_SERVER_ERR, checkRequestToNull, errMessage,
@@ -11,17 +12,28 @@ export const getUsers = (req, res) => {
 };
 
 export const createUser = (req, res) => {
-  const { email, password, name, about, avatar } = req.body;
-  User.create({ email, password, name, about, avatar })
-    .then((user) => {
-      res.send({ data: user });
-    })
-    .catch((err) => {
-      if (checkRequestToNull(req.body)) {
-        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
-        return;
-      }
-      res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err));
+  if (!req.body) {
+    res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
+    return;
+  }
+
+  User.init()
+    .then(() => {
+      bcrypt.hash(req.body.password, 10)
+        .then((hash) => {
+          User.create({
+            email: req.body.email,
+            password: hash,
+            name: req.body.name,
+            about: req.body.about,
+            avatar: req.body.avatar,
+          })
+            .then((user) => {
+              res.send({ data: user });
+            })
+            .catch((error) => res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, error)));
+        })
+        .catch((err) => err);
     });
 };
 
