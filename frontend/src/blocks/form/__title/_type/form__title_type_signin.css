@@ -1,0 +1,12 @@
+.form__title_type_signin {
+  font-size: 24px;
+  color: #CCCCCC;
+  text-align: center;
+}
+
+@media screen and (max-width: 522px) {
+  .form__title_type_signin {
+    font-size: 20px;
+    max-width: 260px;
+  }
+}

@@ -1,0 +1,12 @@
+.form__close-button_type_info-tooltip-close-button {
+  top: -49px;
+  right: -49px;
+}
+
+@media screen and (max-width: 522px) {
+  .form__close-button_type_info-tooltip-close-button {
+    top: -55px;
+    right: 0%;
+    position: relative;
+  }
+}

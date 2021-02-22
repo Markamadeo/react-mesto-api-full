@@ -1,0 +1,13 @@
+.form__container_type_signin {
+  width: 100%;
+  max-width: 430px;
+  margin: auto;
+  background-color: #000;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 522px) {
+  .form__container_type_signin {
+    max-width: 260px;
+  }
+}

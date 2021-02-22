@@ -1,0 +1,21 @@
+.form_type_signin {
+  position: static;
+  max-width: 360px;
+  min-width: 260px;
+  height: auto;
+  display: flex;
+  z-index: 1;
+  transition: visibility 0.3s, opacity 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
+  margin: 0;
+}
+
+.form_type_signin::after {
+  content: "";
+  background-color: #000000;
+  opacity: 0;
+  z-index: 1;
+  position: static;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}

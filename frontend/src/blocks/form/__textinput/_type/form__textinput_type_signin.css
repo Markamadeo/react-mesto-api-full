@@ -1,0 +1,13 @@
+.form__textinput_type_signin {
+  font-size: 14px;
+  background-color: transparent;
+  color: #CCCCCC;
+  border-color: #CCCCCC;
+}
+
+@media screen and (max-width: 522px) {
+  .form__textinput_type_signin {
+    font-size: 14px;
+    max-width: 260px;
+  }
+}
