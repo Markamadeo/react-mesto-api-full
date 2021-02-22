@@ -1,7 +1,7 @@
 /* eslint-disable import/extensions */
 import User from '../models/user.js';
 import {
-  BAD_REQUEST_ERR, NOT_FOUND_ERR, INTERNAL_SERVER_ERR, checkResponseToNull, errMessage,
+  BAD_REQUEST_ERR, NOT_FOUND_ERR, INTERNAL_SERVER_ERR, checkRequestToNull, errMessage,
 } from '../utils/utils.js';
 
 export const getUsers = (req, res) => {
@@ -17,7 +17,7 @@ export const createUser = (req, res) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (checkResponseToNull(req.body)) {
+      if (checkRequestToNull(req.body)) {
         res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
         return;
       }
@@ -28,7 +28,7 @@ export const createUser = (req, res) => {
 export const getUser = (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
-      if (checkResponseToNull(user)) {
+      if (checkRequestToNull(user)) {
         res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
         return;
       }

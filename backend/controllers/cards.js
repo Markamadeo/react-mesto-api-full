@@ -1,7 +1,7 @@
 /* eslint-disable import/extensions */
 import Card from '../models/card.js';
 import {
-  BAD_REQUEST_ERR, NOT_FOUND_ERR, INTERNAL_SERVER_ERR, checkResponseToNull, errMessage,
+  BAD_REQUEST_ERR, NOT_FOUND_ERR, INTERNAL_SERVER_ERR, checkRequestToNull, errMessage,
 } from '../utils/utils.js';
 
 export const getCards = (req, res) => {
@@ -16,7 +16,7 @@ export const postCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (checkResponseToNull(req.body)) {
+      if (checkRequestToNull(req.body)) {
         res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
         return;
       }
@@ -27,7 +27,7 @@ export const postCard = (req, res) => {
 export const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
     .then((card) => {
-      if (checkResponseToNull(card)) {
+      if (checkRequestToNull(card)) {
         res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR, card));
         return;
       }
@@ -45,7 +45,7 @@ export const likeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      if (checkResponseToNull(card)) {
+      if (checkRequestToNull(card)) {
         res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR, card));
         return;
       }
@@ -61,7 +61,7 @@ export const dislikeCard = (req, res) => {
     { new: true },
   )
     .then((card) => {
-      if (checkResponseToNull(card)) {
+      if (checkRequestToNull(card)) {
         res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR, card));
         return;
       }
