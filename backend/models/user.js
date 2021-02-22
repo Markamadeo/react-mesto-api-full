@@ -1,6 +1,23 @@
 import mongoose from 'mongoose';
+import validator from 'validator';
 
 const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator(email) {
+        return validator(email);
+      },
+      message: 'С вашим email что-то не так...',
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 8,
+  },
   name: {
     type: String,
     required: true,
@@ -19,7 +36,9 @@ const userSchema = new mongoose.Schema({
     validate: {
       validator(avatar) {
         // eslint-disable-next-line no-useless-escape
-        return /^(https?:\/\/)([\w\-\.]+)\.([a-z]{2,6}\.?)(\/[\w\W]*)*\/?$/.test(avatar);
+        return /^(https?:\/\/)([\w\-\.]+)\.([a-z]{2,6}\.?)(\/[\w\W]*)*\/?$/.test(
+          avatar,
+        );
       },
       message: 'С вашей ссылкой что-то не так...',
     },
