@@ -6,6 +6,7 @@ import { cards } from './routes/cards.js';
 import { pageNotFound } from './routes/pageNotFound.js';
 import { users } from './routes/users.js';
 import { login, createUser } from './controllers/users.js';
+import { auth } from './middlewares/auth.js';
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -19,18 +20,12 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(express.json());
-app.use((req, res, next) => {
-  req.user = {
-    _id: '6021555add1b183ce8df82ae',
-  };
-  next();
-});
 
 app.post('/signin', login);
 app.post('/signup', createUser);
 
-app.use('/', users);
-app.use('/', cards);
+app.use('/', auth, users);
+app.use('/', auth, cards);
 app.use('/', pageNotFound);
 
 app.listen(PORT, () => { // eslint-disable-next-line no-console
