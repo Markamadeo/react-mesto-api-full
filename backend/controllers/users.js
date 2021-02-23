@@ -12,6 +12,12 @@ export const getUsers = (req, res) => {
     .catch((err) => res.status(INTERNAL_SERVER_ERR).send(errMessage(INTERNAL_SERVER_ERR, err)));
 };
 
+export const getUserInfo = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => res.send({ data: user }))
+    .catch((err) => res.status(INTERNAL_SERVER_ERR).send(errMessage(INTERNAL_SERVER_ERR, err)));
+};
+
 export const createUser = (req, res) => {
   User.init()
     .then(() => {
