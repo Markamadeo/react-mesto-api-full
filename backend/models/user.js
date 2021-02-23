@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -37,6 +38,23 @@ const userSchema = new mongoose.Schema({
     },
   },
 });
+
+// eslint-disable-next-line func-names
+userSchema.statics.findUserByCredentials = function (email, password) {
+  return this.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error('Неправильные почта или пароль'));
+      }
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error('Неправильные почта или пароль'));
+          }
+          return user;
+        });
+    });
+};
 
 const User = mongoose.model('user', userSchema);
 export default User;

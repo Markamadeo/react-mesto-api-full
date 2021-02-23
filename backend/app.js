@@ -1,10 +1,12 @@
 /* eslint-disable import/extensions */
+import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
 import { cards } from './routes/cards.js';
 import { pageNotFound } from './routes/pageNotFound.js';
 import { users } from './routes/users.js';
 
+dotenv.config();
 const PORT = process.env.PORT || 3000;
 const app = express();
 
