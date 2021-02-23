@@ -1,11 +1,15 @@
 import jwt from 'jsonwebtoken';
+// eslint-disable-next-line import/no-named-as-default
+// eslint-disable-next-line import/extensions
+import UnauthorizedError from '../utils/errors/unauthorized-error.js';
 
-// eslint-disable-next-line consistent-return
 export const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return res.status(401).send({ message: 'Необходима авторизация' });
+    const err = new UnauthorizedError('Необходима авторизация');
+    next(err);
+    return;
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -13,8 +17,9 @@ export const auth = (req, res, next) => {
 
   try {
     payload = jwt.verify(token, process.env.JWT_SECRET);
-  } catch (err) {
-    return res.status(401).send({ message: 'Необходима авторизация' });
+  } catch (e) {
+    const err = new UnauthorizedError('Необходима авторизация');
+    next(err);
   }
 
   req.user = payload;

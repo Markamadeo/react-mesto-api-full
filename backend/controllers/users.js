@@ -2,31 +2,36 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
-import {
-  BAD_REQUEST_ERR, NOT_FOUND_ERR, INTERNAL_SERVER_ERR, checkRequestToNull, errMessage,
-} from '../utils/utils.js';
+import BadRequestError from '../utils/errors/bad-request-error.js';
+import NotFoundError from '../utils/errors/not-found-error.js';
 
-export const getUsers = (req, res) => {
+import checkRequestToNull from '../utils/utils.js';
+
+export const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch((err) => res.status(INTERNAL_SERVER_ERR).send(errMessage(INTERNAL_SERVER_ERR, err)));
+    .then((users) => {
+      res.send({ data: users });
+    })
+    .catch(next);
 };
 
-export const getUserInfo = (req, res) => {
+export const getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(INTERNAL_SERVER_ERR).send(errMessage(INTERNAL_SERVER_ERR, err)));
+    .catch(next);
 };
 
-export const createUser = (req, res) => {
+export const createUser = (req, res, next) => {
   User.init()
     .then(() => {
       if (checkRequestToNull(req.body)) {
-        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
-        return;
+        throw new BadRequestError('Тело запроса не может быть пустым');
       }
       bcrypt.hash(req.body.password, 10)
         .then((hash) => {
+          if (!hash) {
+            throw new BadRequestError('Переданы некорректные данные в метод создания карточки или пользователя');
+          }
           User.create({
             email: req.body.email,
             password: hash,
@@ -35,45 +40,55 @@ export const createUser = (req, res) => {
             avatar: req.body.avatar,
           })
             .then((user) => {
+              if (!user) {
+                throw new BadRequestError('Переданы некорректные данные в метод создания карточки или пользователя');
+              }
               res.send({ data: user });
             })
-            .catch((error) => res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, error)));
+            .catch((err) => {
+              next(err);
+            });
         })
-        .catch((error) => res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, error)));
-    });
+        .catch(next);
+    })
+    .catch(next);
 };
 
-export const getUser = (req, res) => {
+export const getUser = (req, res, next) => {
   User.findById(req.params.id)
     .then((user) => {
       if (checkRequestToNull(user)) {
-        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
-        return;
+        throw new NotFoundError('Карточка или пользователь не найдены');
       }
       res.send({ data: user });
     })
-    .catch(() => res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR)));
+    .catch(next);
 };
 
-export const editProfile = (req, res) => {
+export const editProfile = (req, res, next) => {
   const { name, about } = req.body;
+  if (!name && !about) {
+    next(new BadRequestError('Переданы некорректные данные в метод создания карточки или пользователя'));
+  }
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
     { new: true, runValidators: true },
   )
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err)));
+    .then((user) => {
+      res.send({ data: user });
+    })
+    .catch(next);
 };
 
-export const editAvatar = (req, res) => {
+export const editAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(INTERNAL_SERVER_ERR).send(errMessage(INTERNAL_SERVER_ERR, err)));
+    .catch(next);
 };
 
-export const login = (req, res) => {
+export const login = (req, res, next) => {
   const { email, password } = req.body;
   const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -82,9 +97,5 @@ export const login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
       res.send({ token });
     })
-    .catch((err) => {
-      res
-        .status(401)
-        .send({ message: err.message });
-    });
+    .catch(next);
 };

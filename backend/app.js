@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
 import { cards } from './routes/cards.js';
-// import { pageNotFound } from './routes/pageNotFound.js';
+import { pageNotFound } from './routes/pageNotFound.js';
 import { users } from './routes/users.js';
 import { login, createUser } from './controllers/users.js';
 import { auth } from './middlewares/auth.js';
@@ -26,7 +26,20 @@ app.post('/signup', createUser);
 
 app.use('/', auth, users);
 app.use('/', auth, cards);
-// app.use('/', auth, pageNotFound);
+app.use('/', auth, pageNotFound);
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? `На сервере произошла ошибка: ${message}`
+        : message,
+    });
+});
 
 app.listen(PORT, () => { // eslint-disable-next-line no-console
   console.log(`Server has been started on port ${PORT}...`);

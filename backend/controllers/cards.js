@@ -1,44 +1,55 @@
 /* eslint-disable import/extensions */
 import Card from '../models/card.js';
-import {
-  BAD_REQUEST_ERR, NOT_FOUND_ERR, INTERNAL_SERVER_ERR, checkRequestToNull, errMessage,
-} from '../utils/utils.js';
+import BadRequestError from '../utils/errors/bad-request-error.js';
+import NotFoundError from '../utils/errors/not-found-error.js';
+import UnauthorizedError from '../utils/errors/unauthorized-error.js';
+import checkRequestToNull from '../utils/utils.js';
 
-export const getCards = (req, res) => {
+export const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => res.status(INTERNAL_SERVER_ERR).send(errMessage(INTERNAL_SERVER_ERR, err)));
+    .catch(next);
 };
 
-export const postCard = (req, res) => {
+export const postCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
-  Card.create({ name, link, owner })
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (checkRequestToNull(req.body)) {
-        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
-        return;
-      }
-      res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err));
-    });
-};
 
-export const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
+  if (!name && !link && owner) {
+    next(new BadRequestError('Переданы некорректные данные в метод создания карточки или пользователя'));
+    return;
+  }
+
+  Card.create({ name, link, owner })
     .then((card) => {
-      if (checkRequestToNull(card)) {
-        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR, card));
-        return;
+      if (!card) {
+        throw new BadRequestError('Переданы некорректные данные в метод создания карточки или пользователя');
       }
       res.send({ data: card });
     })
-    .catch((err) => {
-      res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err));
-    });
+    .catch(next);
 };
 
-export const likeCard = (req, res) => {
+export const deleteCard = (req, res, next) => {
+  Card.findById(req.params.id)
+    .then((card) => {
+      if (checkRequestToNull(card)) {
+        throw new NotFoundError('Карточка или пользователь не найден');
+      }
+
+      if (!card.owner.equals(req.user._id)) {
+        throw new UnauthorizedError('Не хватает прав для удаления чужой карточки');
+      }
+      Card.findByIdAndRemove(req.params.id)
+        .then((deletedCard) => {
+          res.send({ data: deletedCard });
+        })
+        .catch(next);
+    })
+    .catch(next);
+};
+
+export const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -46,15 +57,14 @@ export const likeCard = (req, res) => {
   )
     .then((card) => {
       if (checkRequestToNull(card)) {
-        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR, card));
-        return;
+        throw new NotFoundError('Карточка или пользователь не найден');
       }
       res.send({ data: card });
     })
-    .catch((err) => res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err)));
+    .catch(next);
 };
 
-export const dislikeCard = (req, res) => {
+export const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -62,10 +72,9 @@ export const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (checkRequestToNull(card)) {
-        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR, card));
-        return;
+        throw new NotFoundError('Карточка или пользователь не найден');
       }
       res.send({ data: card });
     })
-    .catch((err) => res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, err)));
+    .catch(next);
 };
