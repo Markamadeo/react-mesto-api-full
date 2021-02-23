@@ -2,7 +2,7 @@
 import express from 'express';
 
 import {
-  getUsers, getUser, editProfile, editAvatar, getUserInfo
+  getUsers, getUser, editProfile, editAvatar, getUserInfo,
 } from '../controllers/users.js';
 
 export const users = express.Router();
