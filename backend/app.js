@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import { cards } from './routes/cards.js';
 import { pageNotFound } from './routes/pageNotFound.js';
 import { users } from './routes/users.js';
+import { login, createUser } from './controllers/users.js';
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,10 @@ app.use((req, res, next) => {
   };
   next();
 });
+
+app.post('/signin', login);
+app.post('/signup', createUser);
+
 app.use('/', users);
 app.use('/', cards);
 app.use('/', pageNotFound);

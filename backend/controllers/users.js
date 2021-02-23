@@ -13,13 +13,12 @@ export const getUsers = (req, res) => {
 };
 
 export const createUser = (req, res) => {
-  if (!req.body) {
-    res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
-    return;
-  }
-
   User.init()
     .then(() => {
+      if (checkRequestToNull(req.body)) {
+        res.status(NOT_FOUND_ERR).send(errMessage(NOT_FOUND_ERR));
+        return;
+      }
       bcrypt.hash(req.body.password, 10)
         .then((hash) => {
           User.create({
@@ -34,7 +33,7 @@ export const createUser = (req, res) => {
             })
             .catch((error) => res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, error)));
         })
-        .catch((err) => err);
+        .catch((error) => res.status(BAD_REQUEST_ERR).send(errMessage(BAD_REQUEST_ERR, error)));
     });
 };
 
