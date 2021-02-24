@@ -8,6 +8,7 @@ import { pageNotFound } from './routes/pageNotFound.js';
 import { users } from './routes/users.js';
 import { login, createUser } from './controllers/users.js';
 import { auth } from './middlewares/auth.js';
+import { requestLogger, errorLogger } from './middlewares/logger.js';
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -21,7 +22,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(express.json());
-
+app.use(requestLogger);
 app.post(
   '/signin',
   celebrate({
@@ -74,6 +75,8 @@ app.use(
   auth,
   pageNotFound,
 );
+
+app.use(errorLogger);
 
 app.use(errors());
 // eslint-disable-next-line no-unused-vars
