@@ -2,6 +2,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
+import { celebrate, Joi, errors } from 'celebrate';
 import { cards } from './routes/cards.js';
 import { pageNotFound } from './routes/pageNotFound.js';
 import { users } from './routes/users.js';
@@ -21,13 +22,60 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(express.json());
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  login,
+);
 
-app.use('/', auth, users);
-app.use('/', auth, cards);
-app.use('/', auth, pageNotFound);
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  createUser,
+);
 
+app.use(
+  '/',
+  celebrate({
+    headers: Joi.object().keys({
+      authorization: Joi.string().required(),
+    }).unknown(true),
+  }),
+  auth,
+  users,
+);
+app.use(
+  '/',
+  celebrate({
+    headers: Joi.object().keys({
+      authorization: Joi.string().required(),
+    }).unknown(true),
+  }),
+  auth,
+  cards,
+);
+app.use(
+  '/',
+  celebrate({
+    headers: Joi.object().keys({
+      authorization: Joi.string().required(),
+    }).unknown(true),
+  }),
+  auth,
+  pageNotFound,
+);
+
+app.use(errors());
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
