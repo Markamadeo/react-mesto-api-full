@@ -48,7 +48,7 @@ class Auth {
 }
 
 const authApi = new Auth({
-  baseUrl: "https://auth.nomoreparties.co",
+  baseUrl: "https://api.markamadeo.students.nomoreparties.space",
   headers: {
     "Content-Type": "application/json",
   },

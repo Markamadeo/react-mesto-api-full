@@ -142,11 +142,12 @@ class Api {
       .catch((err) => alert(err));
   }
 }
-
+const jwt = localStorage.getItem('jwt');
 const api = new Api({
-  baseUrl: "https://mesto.nomoreparties.co/v1/cohort-17",
+  baseUrl: "https://api.markamadeo.students.nomoreparties.space",
   headers: {
-    authorization: "ce46bc36-f433-488f-bf62-df1955cfcd45",
+    // authorization: "ce46bc36-f433-488f-bf62-df1955cfcd45",
+    authorization: jwt ? jwt : '',
     "Content-Type": "application/json",
   },
 });
