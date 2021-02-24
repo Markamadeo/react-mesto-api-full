@@ -69,25 +69,7 @@ app.use(
   }),
   auth,
   users,
-);
-app.use(
-  '/',
-  celebrate({
-    headers: Joi.object().keys({
-      authorization: Joi.string().required(),
-    }).unknown(true),
-  }),
-  auth,
   cards,
-);
-app.use(
-  '/',
-  celebrate({
-    headers: Joi.object().keys({
-      authorization: Joi.string().required(),
-    }).unknown(true),
-  }),
-  auth,
   pageNotFound,
 );
 
