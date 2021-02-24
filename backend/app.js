@@ -2,6 +2,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import { celebrate, Joi, errors } from 'celebrate';
 import { cards } from './routes/cards.js';
 import { pageNotFound } from './routes/pageNotFound.js';
@@ -13,6 +14,18 @@ import { requestLogger, errorLogger } from './middlewares/logger.js';
 dotenv.config();
 const PORT = process.env.PORT || 3000;
 const app = express();
+const options = {
+  origin: [
+    'http://localhost:3000',
+    'https://markamadeo.students.nomoreparties.space/signin',
+  ],
+  methods: [
+    'GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
+  credentials: true,
+};
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -21,12 +34,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://markamadeo.students.nomoreparties.space');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
-  next();
-});
+app.use('*', cors(options));
 
 app.use(express.json());
 app.use(requestLogger);
