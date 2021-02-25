@@ -8,7 +8,7 @@ import { celebrate, Joi, errors } from 'celebrate';
 import { cards } from './routes/cards.js';
 import { pageNotFound } from './routes/pageNotFound.js';
 import { users } from './routes/users.js';
-import { login, createUser } from './controllers/users.js';
+import { login, createUser, logout } from './controllers/users.js';
 import { auth } from './middlewares/auth.js';
 import { requestLogger, errorLogger } from './middlewares/logger.js';
 
@@ -59,6 +59,11 @@ app.post(
     }),
   }),
   createUser,
+);
+
+app.get(
+  '/logout',
+  logout,
 );
 
 app.use(

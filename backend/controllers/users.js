@@ -105,3 +105,8 @@ export const login = (req, res, next) => {
     })
     .catch(next);
 };
+
+export const logout = (req, res, next) => {
+  res.clearCookie('jwt');
+  res.status(200).send({ message: 'User Logged out' });
+};
