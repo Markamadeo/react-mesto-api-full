@@ -3,11 +3,11 @@ import { useContext } from "react";
 
 function Card({ card, onClickCard, onCardLike, onCardDelete }) {
   const currentUser = useContext(CurrentUserContext);
-  const isLiked = card.likes.some((i) => i._id === currentUser._id);
+  const isLiked = card.likes.some((i) => i === currentUser._id);
   const cardLikeButtonClassName = `gallery-item__heart-button ${
     isLiked && "gallery-item__heart-button_type_active"
   }`;
-  const isOwn = card.owner._id === currentUser._id;
+  const isOwn = card.owner === currentUser._id;
   function handleClick() {
     onClickCard(card);
   }

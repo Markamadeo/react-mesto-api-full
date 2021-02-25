@@ -5,7 +5,7 @@ class Api {
   }
 
   getUserInfo() {
-    return fetch(this.baseUrl + "/users/me", { headers: this.headers })
+    return fetch(this.baseUrl + "/users/me", { headers: this.headers, credentials: 'include' })
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -19,7 +19,7 @@ class Api {
   }
 
   initialCards() {
-    return fetch(this.baseUrl + "/cards", { headers: this.headers })
+    return fetch(this.baseUrl + "/cards", { headers: this.headers, credentials: 'include' })
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -36,6 +36,7 @@ class Api {
     return fetch(this.baseUrl + "/users/me", {
       method: "PATCH",
       headers: this.headers,
+      credentials: 'include',
       body: JSON.stringify(userInfo),
     })
       .then((res) => {
@@ -54,6 +55,7 @@ class Api {
     return fetch(this.baseUrl + "/cards", {
       method: "POST",
       headers: this.headers,
+      credentials: 'include',
       body: JSON.stringify({
         name: data.name,
         link: data.link,
@@ -75,6 +77,7 @@ class Api {
     return fetch(this.baseUrl + `/cards/${id}`, {
       method: "DELETE",
       headers: this.headers,
+      credentials: 'include',
     })
       .then((res) => {
         if (res.ok) {
@@ -90,9 +93,10 @@ class Api {
 
   changeLikeCardStatus(id, status) {
     if (status) {
-      return fetch(this.baseUrl + `/cards/likes/${id}`, {
+      return fetch(this.baseUrl + `/cards/${id}/likes`, {
         method: "PUT",
         headers: this.headers,
+        credentials: 'include'
       })
         .then((res) => {
           if (res.ok) {
@@ -105,9 +109,10 @@ class Api {
         })
         .catch((err) => alert(err));
     } else if (!status) {
-      return fetch(this.baseUrl + `/cards/likes/${id}`, {
+      return fetch(this.baseUrl + `/cards/${id}/likes`, {
         method: "DELETE",
         headers: this.headers,
+        credentials: 'include'
       })
         .then((res) => {
           if (res.ok) {
@@ -126,6 +131,7 @@ class Api {
     return fetch(this.baseUrl + "/users/me/avatar", {
       method: "PATCH",
       headers: this.headers,
+      credentials: 'include',
       body: JSON.stringify({
         avatar: link,
       }),
@@ -142,12 +148,9 @@ class Api {
       .catch((err) => alert(err));
   }
 }
-const jwt = localStorage.getItem('jwt');
 const api = new Api({
   baseUrl: "https://api.markamadeo.students.nomoreparties.space",
   headers: {
-    // authorization: "ce46bc36-f433-488f-bf62-df1955cfcd45",
-    authorization: jwt ? jwt : '',
     "Content-Type": "application/json",
   },
 });

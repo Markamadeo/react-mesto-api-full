@@ -38,54 +38,55 @@ function App() {
   });
 
   useEffect(() => {
-    api
-      .initialCards()
-      .then((dataCards) => {
-        setCards(dataCards);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+    if (loggedIn.status) {
+      initialCards();
+      getUserInfo();
+    }
+  }, [loggedIn.status])
 
   useEffect(() => {
-    api
-      .getUserInfo()
-      .then((data) => {
-        setCurrentUser(data);
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-
-    if (jwt) {
       authApi
-        .validateToken(jwt)
+        .validateToken()
         .then((data) => {
           const userData = data;
           setLoggedIn({
             status: true,
             ...userData.data,
           });
-          history.push("/");
+          history.push('/');
         })
         .catch((err) => console.log(err));
-    }
-  }, [history]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function initialCards() {
+    api
+      .initialCards()
+      .then((dataCards) => {
+        setCards(dataCards.data);
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function getUserInfo() {
+    api
+      .getUserInfo()
+      .then((dataUser) => {
+        setCurrentUser(dataUser.data);
+      })
+      .catch((err) => console.log(err));
+  }
 
   function onLogin(userInfo) {
     authApi
       .authorizationUser(userInfo)
       .then((data) => {
-        localStorage.setItem("jwt", data.token);
         setLoggedIn({
           status: true,
           email: userInfo.email,
         });
-        history.push("/");
       })
       .catch((err) => {
-        console.log(err);
         setSuccessfully(false);
         setIsInfoTooltip(true);
       });
@@ -107,19 +108,21 @@ function App() {
   }
 
   function onSignOut() {
-    localStorage.removeItem("jwt");
+    authApi
+      .logout()
     setLoggedIn({
+      ...loggedIn,
       status: false,
     });
     history.push("/signin");
   }
 
   function handleCardLike(card) {
-    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    const isLiked = card.likes.some((i) => i === currentUser._id);
     api
       .changeLikeCardStatus(card._id, !isLiked)
       .then((newCard) => {
-        const newCards = cards.map((c) => (c._id === card._id ? newCard : c));
+        const newCards = cards.map((c) => (c._id === card._id ? newCard.data : c));
         setCards(newCards);
       })
       .catch((err) => console.log(err));
@@ -153,8 +156,8 @@ function App() {
   function handleUpdateUser(userInfo) {
     api
       .sendProfileInfo(userInfo)
-      .then((data) => {
-        setCurrentUser(data);
+      .then((dataUser) => {
+        setCurrentUser(dataUser.data);
         closeAllPopups();
       })
       .catch((err) => console.log(err));
@@ -163,8 +166,8 @@ function App() {
   function handleUpdateAvatar(link) {
     api
       .changeAvatar(link)
-      .then((data) => {
-        setCurrentUser(data);
+      .then((dataAvatar) => {
+        setCurrentUser(dataAvatar.data);
         closeAllPopups();
       })
       .catch((err) => console.log(err));
@@ -174,7 +177,7 @@ function App() {
     api
       .sendNewCard(data)
       .then((newCard) => {
-        setCards([newCard, ...cards]);
+        setCards([newCard.data, ...cards]);
       })
       .catch((err) => console.log(err));
   }
