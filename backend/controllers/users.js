@@ -107,6 +107,11 @@ export const login = (req, res, next) => {
 };
 
 export const logout = (req, res, next) => {
-  res.clearCookie('jwt');
-  res.status(200).send({ message: 'User Logged out' });
+  res.cookie('jwt', 'deleted', {
+    maxAge: 3600000 * 24 * 7,
+    httpOnly: true,
+    domain: ['markamadeo.students.nomoreparties.space', 'localhost'],
+    sameSite: 'none',
+    secure: true,
+  }).send({ message: 'Выход успешно выполнен' });
 };
