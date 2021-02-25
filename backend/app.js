@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { celebrate, Joi, errors } from 'celebrate';
 import { cards } from './routes/cards.js';
 import { pageNotFound } from './routes/pageNotFound.js';
@@ -35,7 +36,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use('*', cors(options));
-
+app.use(cookieParser());
 app.use(express.json());
 app.use(requestLogger);
 app.post(
@@ -62,11 +63,6 @@ app.post(
 
 app.use(
   '/',
-  celebrate({
-    headers: Joi.object().keys({
-      authorization: Joi.string().required(),
-    }).unknown(true),
-  }),
   auth,
   users,
   cards,

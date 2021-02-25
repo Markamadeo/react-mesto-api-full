@@ -4,15 +4,17 @@ import jwt from 'jsonwebtoken';
 import UnauthorizedError from '../utils/errors/unauthorized-error.js';
 
 export const auth = (req, res, next) => {
-  const { authorization } = req.headers;
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
+  // const { authorization } = req.headers;
+  const { authorization } = req.cookie.jwt;
+  // if (!authorization || !authorization.startsWith('Bearer ')) {
+  if (!authorization) {
     const err = new UnauthorizedError('Необходима авторизация');
     next(err);
     return;
   }
 
-  const token = authorization.replace('Bearer ', '');
+  // const token = authorization.replace('Bearer ', '');
+  const token = authorization;
   let payload;
 
   try {
