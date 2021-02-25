@@ -23,7 +23,7 @@ const options = {
   methods: [
     'GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   preflightContinue: true,
-  optionsSuccessStatus: 204,
+  optionsSuccessStatus: 200,
   allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
   credentials: true,
 };
