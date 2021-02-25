@@ -101,7 +101,7 @@ export const login = (req, res, next) => {
         httpOnly: true,
         sameSite: true,
         domain: 'markamadeo.students.nomoreparties.space',
-      }).end();
+      }).send({ message: 'Авторизация успешна' });
     })
     .catch(next);
 };
