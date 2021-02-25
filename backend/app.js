@@ -78,7 +78,7 @@ app.use(
   auth,
   users,
   cards,
-  pageNotFound,
+  // pageNotFound,
 );
 
 app.use(errorLogger);
