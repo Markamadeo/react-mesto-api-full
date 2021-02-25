@@ -106,9 +106,9 @@ export const login = (req, res, next) => {
     .catch(next);
 };
 
-export const logout = (req, res, next) => {
+export const logout = (req, res) => {
   res.cookie('jwt', 'deleted', {
-    maxAge: 3600000 * 24 * 7,
+    maxAge: 1000,
     httpOnly: true,
     domain: 'markamadeo.students.nomoreparties.space',
     sameSite: 'none',
