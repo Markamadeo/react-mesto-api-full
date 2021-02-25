@@ -5,6 +5,7 @@ import UnauthorizedError from '../utils/errors/unauthorized-error.js';
 
 export const auth = (req, res, next) => {
   // const { authorization } = req.headers;
+  console.log(req.cookie);
   const { authorization } = req.cookie.jwt;
   // if (!authorization || !authorization.startsWith('Bearer ')) {
   if (!authorization) {
