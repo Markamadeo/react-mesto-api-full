@@ -98,6 +98,8 @@ export const login = (req, res, next) => {
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
+        domain: 'markamadeo.students.nomoreparties.space',
+        sameSite: true,
       }).send({ message: 'Авторизация успешна' });
     })
     .catch(next);
