@@ -6,8 +6,8 @@ import UnauthorizedError from '../utils/errors/unauthorized-error.js';
 export const auth = (req, res, next) => {
   const authorization = req.cookies.jwt;
   if (!authorization) {
-    const err = new UnauthorizedError('Необходима авторизация');
-    next(err);
+    // const err = new UnauthorizedError('Необходима авторизация');
+    // next(err);
     return;
   }
 
