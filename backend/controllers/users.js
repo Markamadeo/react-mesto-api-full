@@ -98,7 +98,7 @@ export const login = (req, res, next) => {
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
-        domain: 'localhost',
+        domain: 'markamadeo.students.nomoreparties.space',
         sameSite: 'none',
         secure: true,
       }).send({ message: 'Авторизация успешна' });
@@ -110,7 +110,7 @@ export const logout = (req, res, next) => {
   res.cookie('jwt', 'deleted', {
     maxAge: 3600000 * 24 * 7,
     httpOnly: true,
-    domain: 'localhost',
+    domain: 'markamadeo.students.nomoreparties.space',
     sameSite: 'none',
     secure: true,
   }).send({ message: 'Выход успешно выполнен' });
