@@ -107,13 +107,11 @@ export const login = (req, res, next) => {
 };
 
 export const logout = (req, res) => {
-  // res.cookie('jwt', 'deleted', {
-  //   maxAge: 1000,
-  //   httpOnly: true,
-  //   domain: 'markamadeo.students.nomoreparties.space',
-  //   sameSite: 'none',
-  //   secure: true,
-  // }).send({ message: 'Выход успешно выполнен' });
-  res.clearCookie('jwt', { path: '/', domain: 'markamadeo.students.nomoreparties.space' });
-  return res.status(200).send({ message: 'Logout'});
+  res.cookie('jwt', 'deleted', {
+    maxAge: 100,
+    httpOnly: true,
+    domain: 'markamadeo.students.nomoreparties.space',
+    sameSite: 'none',
+    secure: true,
+  }).send({ message: 'Выход успешно выполнен' });
 };
