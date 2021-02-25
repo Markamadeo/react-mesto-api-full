@@ -98,7 +98,7 @@ export const login = (req, res, next) => {
       // res.send({ token });
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
-        secure: true,
+        httpOnly: false,
       }).send({ message: 'Авторизация успешна' });
     })
     .catch(next);
