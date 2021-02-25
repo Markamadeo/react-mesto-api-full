@@ -99,7 +99,7 @@ export const login = (req, res, next) => {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
         domain: 'markamadeo.students.nomoreparties.space',
-        sameSite: true,
+        sameSite: 'none',
       }).send({ message: 'Авторизация успешна' });
     })
     .catch(next);
