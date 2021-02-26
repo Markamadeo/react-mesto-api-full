@@ -1,8 +1,8 @@
 /* eslint-disable import/extensions */
 import Card from '../models/card.js';
 import BadRequestError from '../utils/errors/bad-request-error.js';
+import ForbiddenError from '../utils/errors/forbidden-error.js';
 import NotFoundError from '../utils/errors/not-found-error.js';
-import UnauthorizedError from '../utils/errors/unauthorized-error.js';
 import checkRequestToNull from '../utils/utils.js';
 
 export const getCards = (req, res, next) => {
@@ -38,7 +38,7 @@ export const deleteCard = (req, res, next) => {
       }
 
       if (!card.owner.equals(req.user._id)) {
-        throw new UnauthorizedError('Не хватает прав для удаления чужой карточки');
+        throw new ForbiddenError('Не хватает прав для удаления чужой карточки');
       }
       Card.findByIdAndRemove(req.params.id)
         .then((deletedCard) => {

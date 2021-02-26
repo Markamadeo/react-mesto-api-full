@@ -19,6 +19,7 @@ const options = {
   origin: [
     'http://localhost:3000',
     'https://markamadeo.students.nomoreparties.space',
+    'https://www.markamadeo.students.nomoreparties.space',
   ],
   methods: [
     'GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
