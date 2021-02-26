@@ -34,9 +34,9 @@ users.patch(
   '/users/me/avatar',
   celebrate({
     body: Joi.object().keys({
-      avatar: Joi.string().custom((value, helper) => {
+      avatar: Joi.string().custom((value, helpers) => {
         if (!linkRegExp.test(value)) {
-          return helper.message('Ссылка не прошла валидацию');
+          return helpers.message('Ссылка не прошла валидацию');
         }
         return value;
       }),
