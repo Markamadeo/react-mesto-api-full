@@ -40,6 +40,7 @@ export const createUser = (req, res, next) => {
             about: req.body.about,
             avatar: req.body.avatar,
           })
+            .toFail(next(new ConflictError('Такой email уже используеться')))
             .then((user) => {
               if (!user) {
                 throw new BadRequestError('Переданы некорректные данные в метод создания карточки или пользователя');
@@ -57,12 +58,7 @@ export const createUser = (req, res, next) => {
         })
         .catch(next);
     })
-    .catch((err) => {
-      if (err.code === '11000') {
-        next(new ConflictError('Такой email уже используеться'));
-      }
-      next(err);
-    });
+    .catch(next);
 };
 
 export const getUser = (req, res, next) => {
