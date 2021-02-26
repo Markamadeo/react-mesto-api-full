@@ -14,7 +14,7 @@ users.get(
   '/users/:id',
   celebrate({
     params: Joi.object().keys({
-      id: Joi.hex().length(24),
+      id: Joi.string().hex().length(24),
     }),
   }),
   getUser,
