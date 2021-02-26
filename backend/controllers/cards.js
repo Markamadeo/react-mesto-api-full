@@ -3,7 +3,7 @@ import Card from '../models/card.js';
 import BadRequestError from '../utils/errors/bad-request-error.js';
 import ForbiddenError from '../utils/errors/forbidden-error.js';
 import NotFoundError from '../utils/errors/not-found-error.js';
-import checkRequestToNull from '../utils/utils.js';
+import { checkRequestToNull } from '../utils/utils.js';
 
 export const getCards = (req, res, next) => {
   Card.find({})

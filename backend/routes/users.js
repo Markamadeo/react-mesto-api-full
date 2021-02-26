@@ -5,6 +5,7 @@ import { celebrate, Joi } from 'celebrate';
 import {
   getUsers, getUser, editProfile, editAvatar, getUserInfo,
 } from '../controllers/users.js';
+import { linkRegExp } from '../utils/utils.js';
 
 export const users = express.Router();
 
@@ -33,7 +34,12 @@ users.patch(
   '/users/me/avatar',
   celebrate({
     body: Joi.object().keys({
-      avatar: Joi.string().required().uri(),
+      avatar: Joi.string().custom((value, helper) => {
+        if (!linkRegExp.test(value)) {
+          return helper.message('Ссылка не прошла валидацию');
+        }
+        return value;
+      }),
     }),
   }),
   editAvatar,

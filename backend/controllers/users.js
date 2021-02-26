@@ -6,7 +6,7 @@ import BadRequestError from '../utils/errors/bad-request-error.js';
 import ConflictError from '../utils/errors/conflict-error.js';
 import NotFoundError from '../utils/errors/not-found-error.js';
 
-import checkRequestToNull from '../utils/utils.js';
+import { checkRequestToNull } from '../utils/utils.js';
 
 export const getUsers = (req, res, next) => {
   User.find({})
@@ -40,7 +40,6 @@ export const createUser = (req, res, next) => {
             about: req.body.about,
             avatar: req.body.avatar,
           })
-            .toFail(next(new ConflictError('Такой email уже используется')))
             .then((user) => {
               if (!user) {
                 throw new BadRequestError('Переданы некорректные данные в метод создания карточки или пользователя');
@@ -54,7 +53,12 @@ export const createUser = (req, res, next) => {
                 },
               });
             })
-            .catch(next);
+            .catch((err) => {
+              if (err.code === 11000) {
+                return next(new ConflictError('Данный email уже используется'));
+              }
+              next(err);
+            });
         })
         .catch(next);
     })
