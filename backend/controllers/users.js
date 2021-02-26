@@ -55,7 +55,7 @@ export const createUser = (req, res, next) => {
             })
             .catch((err) => {
               if (err.code === '11000') {
-                throw new ConflictError('Такой email уже используеться');
+                next(new ConflictError('Такой email уже используеться'));
               }
               next(err);
             });
