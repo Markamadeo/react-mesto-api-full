@@ -43,7 +43,14 @@ export const createUser = (req, res, next) => {
               if (!user) {
                 throw new BadRequestError('Переданы некорректные данные в метод создания карточки или пользователя');
               }
-              res.send({ data: user });
+              res.send({
+                data: {
+                  email: user.email,
+                  name: user.name,
+                  about: user.about,
+                  avatar: user.avatar,
+                },
+              });
             })
             .catch((err) => {
               next(err);
