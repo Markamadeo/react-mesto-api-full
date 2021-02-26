@@ -38,7 +38,7 @@ users.patch(
         if (!linkRegExp.test(value)) {
           return helpers.message('Ссылка не прошла валидацию');
         }
-        return value;
+        return true;
       }),
     }),
   }),
