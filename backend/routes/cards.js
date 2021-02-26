@@ -4,6 +4,7 @@ import { celebrate, Joi } from 'celebrate';
 import {
   getCards, postCard, deleteCard, likeCard, dislikeCard,
 } from '../controllers/cards.js';
+import { linkRegExp } from '../utils/utils.js';
 
 export const cards = express.Router();
 
@@ -13,7 +14,12 @@ cards.post(
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
-      link: Joi.string().required().uri(),
+      link: Joi.string().custom((value, helpers) => {
+        if (!linkRegExp.test(value)) {
+          return helpers.message('Ссылка не прошла валидацию');
+        }
+        return value;
+      }),
     }),
   }),
   postCard,
