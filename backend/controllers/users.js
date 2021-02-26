@@ -55,14 +55,14 @@ export const createUser = (req, res, next) => {
             })
             .catch(next);
         })
-        .catch((err) => {
-          if (err.code === '11000') {
-            next(new ConflictError('Такой email уже используеться'));
-          }
-          next(err);
-        });
+        .catch(next);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.code === '11000') {
+        next(new ConflictError('Такой email уже используеться'));
+      }
+      next(err);
+    });
 };
 
 export const getUser = (req, res, next) => {
