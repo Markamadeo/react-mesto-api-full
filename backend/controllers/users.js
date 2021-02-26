@@ -45,10 +45,8 @@ export const createUser = (req, res, next) => {
               }
               res.send({
                 data: {
-                  email: user.email,
-                  name: user.name,
-                  about: user.about,
-                  avatar: user.avatar,
+                  ...user,
+                  password: 'hidden',
                 },
               });
             })
