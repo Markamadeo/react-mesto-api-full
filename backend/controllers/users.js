@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 import BadRequestError from '../utils/errors/bad-request-error.js';
+import ConflictError from '../utils/errors/conflict-error.js';
 import NotFoundError from '../utils/errors/not-found-error.js';
 
 import checkRequestToNull from '../utils/utils.js';
@@ -53,6 +54,9 @@ export const createUser = (req, res, next) => {
               });
             })
             .catch((err) => {
+              if (err.code === '11000') {
+                throw new ConflictError('Такой email уже используеться');
+              }
               next(err);
             });
         })
