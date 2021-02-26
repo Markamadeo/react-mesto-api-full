@@ -11,6 +11,8 @@ import { users } from './routes/users.js';
 import { login, createUser, logout } from './controllers/users.js';
 import { auth } from './middlewares/auth.js';
 import { requestLogger, errorLogger } from './middlewares/logger.js';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +30,10 @@ const options = {
   allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
   credentials: true,
 };
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -37,6 +43,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use('*', cors(options));
+app.use(helmet());
+app.use(limiter);
 app.use(cookieParser());
 app.use(express.json());
 app.use(requestLogger);
