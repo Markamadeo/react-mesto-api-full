@@ -5,14 +5,14 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { celebrate, Joi, errors } from 'celebrate';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 import { cards } from './routes/cards.js';
 import { pageNotFound } from './routes/pageNotFound.js';
 import { users } from './routes/users.js';
 import { login, createUser, logout } from './controllers/users.js';
 import { auth } from './middlewares/auth.js';
 import { requestLogger, errorLogger } from './middlewares/logger.js';
-import rateLimit from 'express-rate-limit';
-import helmet from 'helmet';
 
 dotenv.config();
 const PORT = process.env.PORT || 3000;

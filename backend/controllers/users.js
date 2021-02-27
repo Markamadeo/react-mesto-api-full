@@ -53,6 +53,7 @@ export const createUser = (req, res, next) => {
                 },
               });
             })
+            // eslint-disable-next-line consistent-return
             .catch((err) => {
               if (err.code === 11000) {
                 return next(new ConflictError('Данный email уже используется'));
